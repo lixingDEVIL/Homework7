@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>京东轮播图</title>
+        <meta charset="utf-8">
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                line-height: 1;
+            }
+            #banner{
+                position: relative;
+                width: 590px;
+                height: 470px;
+                top: 10px;
+                margin: 0 auto;   
+            }
+            .img{
+                display: none;
+                width: 590px;
+                height: 470px;
+                position: absolute;
+            }
+            #bth-list{
+                position: absolute;
+                left: 500px;
+                bottom: 310px;
+                height: 15px;
+            }
+            .bth{
+                opacity: 0.8;
+                position: relative;
+                display: inline-block;
+                width: 8px;
+                height: 8px;
+                background-color: rgba(255, 255, 255,0.6);
+                border-radius: 50px;
+                margin-right: 5px;
+            }
+            .active{
+                opacity: 7;
+                width: 10px;
+                height: 10px;
+                top: 3px;
+	            background-color:rgba(255,255,255,1);
+                border: 3px solid rgba(0,0,0,.5);
+            }
+            #tab1 {
+                position: absolute;
+                top: 30%;
+                left: 473px;
+                width: 24px;
+                height: 36px;
+                line-height: 36px;
+                font-size: 20px;
+                background-color: rgba(0, 0, 0, .15);
+                border-top-right-radius: 20px;
+                border-bottom-right-radius: 20px;
+            }   
+            #tab2 {
+                position: absolute;
+                top: 30%;
+                left: 1038px;
+                width: 24px;
+                height: 36px;
+                line-height: 36px;
+                font-size: 20px;
+                background-color: rgba(0, 0, 0, .15);
+                border-top-left-radius: 20px;
+                border-bottom-left-radius: 20px;
+            }
+            
+            #left { 
+                display: block;
+                position: relative;
+                left: 1px;     
+                width: 100%;
+                height: 100%;
+                color: rgba(255, 255, 255,0.7);
+            }
+          
+            #right {
+                display: block;
+                position: relative;
+                left: 8px;               
+                width: 100%;
+                height: 100%;
+                color: rgba(255, 255, 255, 0.7);
+            }
+            .tab3{
+                background-color: rgba(0, 0, 0, .5);
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 外层div -->
+        <div id="banner">
+            <img class="img" style="display: block;" src="imgs/1.jpg" alt="1">
+            <img class="img" src="imgs/2.jpg" alt="2">
+            <img class="img" src="imgs/3.jpg" alt="3">
+            <img class="img" src="imgs/4.jpg" alt="4">
+            <img class="img" src="imgs/5.jpg" alt="5">
+            <img class="img" src="imgs/6.jpg" alt="6">
+            <img class="img" src="imgs/7.jpg" alt="7">
+            <img class="img" src="imgs/8.jpg" alt="8">
+        </div>
+        <!-- 点击按钮列表 -->
+        <div id="bth-list">
+            <div class="bth active"></div>
+            <div class="bth"></div>
+            <div class="bth"></div>
+            <div class="bth"></div>
+            <div class="bth"></div>
+            <div class="bth"></div>
+            <div class="bth"></div>
+            <div class="bth"></div>
+        </div>
+        <div id="tab">
+            <!-- 左按钮 -->
+            <div id="tab1">
+                <div id="left">&lt;</div>
+            </div>   
+            <!-- 右按钮 -->
+            <div id="tab2">
+                <div id="right">&gt;</div>
+            </div>
+        </div>
+        <script src="jquery.js"></script>
+        <script>
+            $("document").ready(function() {
+                var index = 0; //定义一个下标
+                var stop = false; //定义一个触发器
+                var $li = $("#banner").children(".img"); //获取所有的轮播图片
+                var $page = $("#bth-list").children(".bth"); //获取所有的圆点列表
+                var $tab = $("#tab").children("#tab1"&"#tab2");//左右键
+                //控制图片
+                $page.hover(function() {
+                    
+                    index = $(this).index(); //把图片下标的值赋给定义下标
+                    $(this).addClass("active").stop(true,true).siblings().removeClass("active"); //给鼠标选中的圆点列表添加样式
+                    $li.eq(index).stop(true,true).fadeIn(1000).siblings().fadeOut(1000); //轮播图片淡入淡出效果  
+                });
+            //浮上左右按钮
+            $tab.hover(function() {
+                $(this).addClass("tab3");
+            }, function() {
+                $(this).removeClass("tab3");
+            });
+            //左边点击按钮
+            $("#left").click(function() {
+                clearInterval(timer);
+                index--;
+                if(index < 0) {
+                    index = $li.length-1;
+                }
+                $li.eq(index).stop(true, true).fadeIn().siblings().fadeOut();
+                $page.eq(index).addClass("active").stop(true, true).siblings().removeClass("active");
+            });
+            //右边点击按钮
+            $("#right").click(function(){
+                clearInterval(timer);
+                index++;
+                if(index > $li.length-1) {
+                    index = 0;
+                }
+                $li.eq(index).stop(true,true).fadeIn().siblings().fadeOut();
+                $page.eq(index).addClass("active").stop(true, true).siblings().removeClass("active");
+            });
+            //自动轮播图片
+            var timer = setInterval(function() {
+                if(stop) return;
+                index++;
+                if(index > $li.length-1) {
+                    index = 0;
+                }
+                $li.eq(index).stop(true, true).fadeIn().siblings().fadeOut();
+                $page.eq(index).addClass("active").stop(true, true).siblings().removeClass("active");
+            },4000);
+            //鼠标移入图片内，自动轮播停止
+            $("#banner").mousemove(function() {
+			    clearInterval(timer);
+            }).mouseout(function() {
+                timer = setInterval(function() {
+                    if(stop) return;
+                    index++;
+                    if(index > $li.length-1) {
+                        index = 0;
+                    }
+                    $li.eq(index).stop(true, true).fadeIn().siblings().fadeOut();
+                    $page.eq(index).addClass("active").stop(true, true).siblings().removeClass("active");
+                },5000);
+            });
+    	});
+        </script>
+    </body>
+</html>
